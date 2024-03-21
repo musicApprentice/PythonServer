@@ -1,0 +1,100 @@
+<head>
+    <title>Image from Python Server with Audio Upload</title>
+    University of Massachusetts Amherst: East Asian Languages and Culture
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UMass Amherst Theme</title>
+    <!-- Link to the external CSS file -->
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <script>
+        let mediaRecorder;
+        let audioBlob;
+        
+
+        function startRecording() {
+            console.log("Recording started");
+            navigator.mediaDevices.getUserMedia({ audio: true })
+                .then(stream => {
+                    mediaRecorder = new MediaRecorder(stream);
+                    const audioChunks = [];
+
+                    mediaRecorder.ondataavailable = event => {
+                        audioChunks.push(event.data);
+                    };
+                    mediaRecorder.start();
+
+                    mediaRecorder.onstop = () => {
+                        console.log("Recording stopped");
+                        audioBlob = new Blob(audioChunks, { type: 'audio/mpeg' });
+                        const audioUrl = URL.createObjectURL(audioBlob);
+                        document.getElementById('audioPlayer').src = audioUrl;
+                        document.getElementById('playAudioButton').disabled = false;
+                        document.getElementById('classifyToneButton').disabled = false;
+                    };
+                });
+        }
+
+        function stopRecording() {
+            mediaRecorder.stop();
+        }
+
+        function playRecordedAudio() {
+            const audioPlayer = document.getElementById('audioPlayer');
+            audioPlayer.play();
+        }
+
+        function getRandomTone() {
+            const tones = ["First Tone", "Second Tone", "Third Tone", "Fourth Tone", "Neutral Tone"];
+            const randomTone = tones[Math.floor(Math.random() * tones.length)];
+            document.getElementById('targetTone').textContent = randomTone;
+        }
+
+        async function classifyTone() {
+            console.log("Sending audio for tone classification");
+            const formData = new FormData();
+            formData.append('file', audioBlob, 'recording.mp3');
+
+            try {
+                const response = await fetch('http://localhost:5000/classify-tone', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                //const classification = await response.text(); 
+                const classification = "First Tone"
+                console.log("Tone classification received:", classification);
+                alert("Your tone is classified as: " + classification);
+                console.log(classification)
+                console.log(document.getElementById('targetTone').textContent)
+                alert(classification == document.getElementById('targetTone').textContent? "Your tone matched the expected tone! Good job!": "Your tone did not match the expected tone. Try again! ")
+
+
+                getRandomTone(); // Show a new tone after user clicks 'OK'
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', getRandomTone); // Show a random tone when the page loads
+
+    </script>
+</head>
+<body>
+    
+    <header>
+        <h1>Chinese Tone Classifier</h1>
+    </header>
+    <button onclick="startRecording()">Start Recording</button>
+    <button onclick="stopRecording()">Stop Recording</button>
+    <button id="playAudioButton" onclick="playRecordedAudio()" disabled>Play Recorded Audio</button>
+    <button id="classifyToneButton" onclick="classifyTone()" disabled>Classify My Tone</button>
+    <div id="toneContainer">
+        Pronounce:<p id="targetTone"> </p>
+    </div>
+    <audio id="audioPlayer" controls hidden></audio>
+</html>

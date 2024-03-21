@@ -1,0 +1,74 @@
+/* Base styles */
+
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #FFF;
+    color: #880000;
+    padding: 20px;
+}
+
+button {
+    background-color: #880000; /* UMass Maroon Red */
+    color: #FFFFFF; /* White */
+    border: none;
+    padding: 10px 20px;
+    margin: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #a30000; /* A slightly lighter maroon for hover effect */
+}
+
+button:disabled {
+    background-color: #cccccc; /* Grey out the button when disabled */
+    cursor: not-allowed;
+}
+
+#imageContainer, #mfccImageContainer {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin-top: 20px;
+    border: 3px solid #880000; /* Maroon border for images */
+    padding: 5px;
+}
+
+/* Specific adjustments for the 'Classify My Tone' and 'Check Server Response' buttons */
+#classifyToneButton, #sendAudioButton {
+    background-color: #ffffff; /* White background for a specific contrast */
+    color: #880000; /* Maroon text */
+    border: 2px solid #880000; /* Maroon border */
+}
+
+#classifyToneButton:hover, #sendAudioButton:hover {
+    background-color: #f2f2f2; /* Light grey for hover */
+}
+
+/* Ensuring accessibility */
+button:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px #fff, 0 0 0 4px #880000;
+}
+
+body, button, input, textarea {
+    font-family: 'Times New Roman', Times, serif;
+}
+
+header {
+    background-color: #880000; /* UMass Maroon */
+    color: #FFFFFF; /* White */
+    padding: 20px 0;
+    text-align: center;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+h1 {
+    margin: 0;
+    font-weight: bold; /* Bold for headings */
+    font-size: 2em;
+}
